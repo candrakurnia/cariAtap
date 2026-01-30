@@ -256,6 +256,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                             ),
                             onPressed: () {
+                             if (!_formKey.currentState!.validate()) return;
                               registerController.register(
                                 nameController.text,
                                 emailController.text,
