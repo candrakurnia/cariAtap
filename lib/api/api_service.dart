@@ -7,73 +7,32 @@ class ApiService {
   final Dio dio = Dio();
 
   ApiService() {
-    dio.interceptors.add(
-      InterceptorsWrapper(
-        onRequest: (options, handler) {
-          // options.headers['Authorization'] = 'Bearer $token';
-          return handler.next(options);
-        },
-      ),
-    );
-    dio.interceptors.add(
-      LogInterceptor(
-        request: true,
-        responseBody: true,
-        responseHeader: true,
-        requestHeader: true,
-      ),
-    );
+    dio.options.baseUrl = baseUrl;
+    dio.options.connectTimeout = const Duration(seconds: 10);
+    dio.options.receiveTimeout = const Duration(seconds: 10);
   }
 
   Future<BaseModel> fetchLogin(String email, String password) async {
-    const String url = '$baseUrl/user/login';
+    const String url = "$baseUrl/user/login";
     try {
       final response = await dio.post(
         url,
         data: {'email': email, 'password': password},
+        options: Options(
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+          },
+        ),
       );
+
       if (response.statusCode == 200) {
         return BaseModel.fromJson(response.data);
       } else {
-        throw Exception('Failed to login ${response.statusMessage}');
+        throw Exception('Failed to Login : ${response.statusCode}');
       }
     } on DioException catch (e) {
-      throw Exception('Failed to login: $e');
+      throw Exception('Failed to Login : ${e.response?.statusCode}');
     }
-  }
-
-  Future<BaseModel> fetchRegister(
-    String name,
-    String email,
-    String password,
-    String role,
-  ) async {
-    const String url = '$baseUrl/user/register';
-    try {
-      final response = await dio.post(
-        url,
-        data: {
-          'name': name,
-          'email': email,
-          'password': password,
-          'role': role,
-        },
-      );
-      if (response.statusCode == 201) {
-        return BaseModel.fromJson(response.data);
-      } else {
-        throw Exception('Failed to register');
-      }
-    } on DioException catch (e) {
-      throw Exception('Failed to register: $e');
-    }
-  }
-
-  Future<Response> put(String url, dynamic data) async {
-    return await dio.put(url, data: data);
-  }
-
-  Future<Response> delete(String url) async {
-    return await dio.delete(url);
   }
 }
