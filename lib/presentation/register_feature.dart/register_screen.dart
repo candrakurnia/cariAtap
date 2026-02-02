@@ -255,8 +255,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 Color(0xDF736256),
                               ),
                             ),
-                            onPressed: () {
-                              registerController.register(
+                            onPressed: () async {
+                             if (_formKey.currentState!.validate()) return;
+                              await registerController.register(
                                 nameController.text,
                                 emailController.text,
                                 passwordController.text,

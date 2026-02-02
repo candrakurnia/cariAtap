@@ -1,3 +1,4 @@
+import 'package:cari_atap/common/state_enum.dart';
 import 'package:cari_atap/controllers/login_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -168,12 +169,20 @@ class _LoginScreenState extends State<LoginScreen> {
                               Color(0xDF736256),
                             ),
                           ),
-                          onPressed: () {
+                          onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                              loginController.login(
+                              await loginController.login(
                                 emailController.text.trim(),
                                 passwordController.text,
                               );
+                              if (loginController.requestState == RequestState.success) {
+                                Get.offAllNamed("/main");
+                              } else {
+                                Get.snackbar(
+                                  "Error",
+                                  loginController.message ?? "Terjadi kesalahan",
+                                );
+                              }
                             }
                           },
                           child: Obx(() {
