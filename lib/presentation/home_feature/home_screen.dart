@@ -29,19 +29,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Gap(20),
-                  // Top Section: Profile, Location, Notification
                   _buildTopSection(),
                   const Gap(24),
-                  // Search and Filter Bar
                   _buildSearchBar(),
                   const Gap(24),
-                  // Popular Now Section
                   _buildPopularNowSection(),
                   const Gap(24),
-                  // Property Categories
                   _buildCategorySection(),
                   const Gap(24),
-                  // Main Property Listings
                   _buildPropertyListings(),
                   const Gap(20),
                 ],
@@ -56,7 +51,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildTopSection() {
     return Row(
       children: [
-        // Profile Picture
         CircleAvatar(
           radius: 25,
           backgroundColor: Colors.white,
@@ -73,7 +67,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         const Gap(12),
-        // Greeting and Location
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,17 +99,21 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
-        // Notification Icon
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Icon(
-            Icons.notifications_outlined,
-            color: Colors.black87,
-            size: 24,
+        GestureDetector(
+          onTap: () {
+            debugPrint("Clicked");
+          },
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
+              Icons.notifications_outlined,
+              color: Colors.black87,
+              size: 24,
+            ),
           ),
         ),
       ],
@@ -128,20 +125,21 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         Expanded(
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(12),
+              color: Colors.white12
             ),
-            child: const Row(
-              children: [
-                Icon(Icons.search, color: Colors.grey, size: 20),
-                Gap(12),
-                Text(
-                  'Pencarian ...',
-                  style: TextStyle(color: Colors.grey, fontSize: 14),
+            child: TextFormField(
+              keyboardType: TextInputType.text,
+              decoration: InputDecoration(
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.0)
                 ),
-              ],
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.0)
+                ),
+                hintText: "Pencarian ..."
+              ),
             ),
           ),
         ),
@@ -311,13 +309,14 @@ class _HomeScreenState extends State<HomeScreen> {
       height: 100,
       child: Center(
         child: ListView.builder(
+          shrinkWrap: true,
           scrollDirection: Axis.horizontal,
           itemCount: categories.length,
           itemBuilder: (context, index) {
             final category = categories[index];
             return Container(
               margin: EdgeInsets.only(
-                right: index < categories.length - 1 ? 16 : 0,
+                right: index < categories.length - 1 ? 20 : 0,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
