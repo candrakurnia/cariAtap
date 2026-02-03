@@ -22,7 +22,7 @@ class RegisterController extends GetxController {
     try {
       _requestState = RequestState.loading;
       update();
-      final response = await apiService.fetchRegister(name, email, password, role);
+      final response = await apiService.fetchLogin(email, password);
       if (response.statusCode == 201) {
         _baseModel = response;
         _requestState = RequestState.success;
