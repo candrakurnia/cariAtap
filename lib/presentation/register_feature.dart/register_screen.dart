@@ -1,3 +1,4 @@
+import 'package:cari_atap/common/state_enum.dart';
 import 'package:cari_atap/controllers/register_controller.dart';
 import 'package:cari_atap/presentation/login_feature/login_screen.dart';
 import 'package:flutter/material.dart';
@@ -101,7 +102,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         if (value!.isEmpty) {
                           return "Harap isi data kosong";
                         }
-                        return value;
+                        return null;
                       },
                     ),
                     Gap(12.0),
@@ -129,63 +130,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         if (value!.isEmpty) {
                           return "Harap isi data kosong";
                         }
-                        return value;
+                        return null;
                       },
                     ),
-                    // Gap(12.0),
-                    // Text(
-                    //   "Phone",
-                    //   style: GoogleFonts.poppins(
-                    //     fontSize: 14,
-                    //     fontWeight: FontWeight.w600,
-                    //   ),
-                    // ),
-                    // Gap(5.0),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.start,
-                    //   children: [
-                    //     Flexible(
-                    //       child: DropdownButton(
-                    //         borderRadius: BorderRadius.circular(16.0),
-                    //         itemHeight: 58,
-                    //         value: _valNumber,
-                    //         items: _myFriends.map((value) {
-                    //           return DropdownMenuItem(
-                    //             value: value,
-                    //             child: Text(value),
-                    //           );
-                    //         }).toList(),
-                    //         onChanged: (value) {
-                    //           setState(() {
-                    //             _valNumber = value.toString();
-                    //           });
-                    //         },
-                    //       ),
-                    //     ),
-                    //     Gap(4.0),
-                    //     Expanded(
-                    //       flex: 6,
-                    //       child: TextFormField(
-                    //         keyboardType: TextInputType.number,
-                    //         decoration: InputDecoration(
-                    //           border: OutlineInputBorder(
-                    //             borderRadius: BorderRadius.circular(8.0),
-                    //           ),
-                    //           enabledBorder: OutlineInputBorder(
-                    //             borderRadius: BorderRadius.circular(8.0),
-                    //           ),
-                    //           hintText: "Phone",
-                    //         ),
-                    //         validator: (value) {
-                    //           if (value!.isEmpty) {
-                    //             return "Harap isi data kosong";
-                    //           }
-                    //           return value;
-                    //         },
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
                     Gap(12.0),
                     Text(
                       "Password",
@@ -212,7 +159,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         if (value!.isEmpty) {
                           return "Harap isi data kosong";
                         }
-                        return value;
+                        return null;
                       },
                     ),
                     Gap(12.0),
@@ -240,7 +187,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         if (value!.isEmpty) {
                           return "Harap isi data kosong";
                         }
-                        return value;
+                        return null;
                       },
                     ),
                     Gap(16.0),
@@ -256,13 +203,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                             ),
                             onPressed: () async {
-                             if (_formKey.currentState!.validate()) return;
+                              if (!_formKey.currentState!.validate()) return;
                               await registerController.register(
                                 nameController.text,
                                 emailController.text,
                                 passwordController.text,
                                 roleController.text,
                               );
+                              if (registerController.requestState ==
+                                  RequestState.success) {
+                                Get.offAllNamed("/confirm", arguments: registerController.baseModel?.data?.user?.confirmationId ?? "");
+                              } else {
+                                Get.snackbar(
+                                  "Error",
+                                  registerController.message ??
+                                      "Terjadi kesalahan",
+                                );
+                              }
                             },
                             child: registerController.loading.value
                                 ? SizedBox(

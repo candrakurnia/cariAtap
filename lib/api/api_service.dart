@@ -12,6 +12,47 @@ class ApiService {
     dio.options.receiveTimeout = const Duration(seconds: 10);
   }
 
+  Future<BaseModel> fetchConfirmation(String confirmationId) async {
+    const String url = "$baseUrl/user/confirmation";
+    try {
+      final response = await dio.get("$url/$confirmationId");
+      if (response.statusCode == 200) {
+        return BaseModel.fromJson(response.data);
+      } else {
+        throw Exception('Failed to Confirmation : ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      throw Exception('Failed to Confirmation : ${e.response?.statusCode}');
+    }
+  }
+
+  Future<BaseModel> fetchRegister(
+    String name,
+    String email,
+    String password,
+    String role,
+  ) async {
+    const String url = "$baseUrl/user/register";
+    try {
+      final response = await dio.post(
+        url,
+        data: {
+          'name': name,
+          'email': email,
+          'password': password,
+          'role': role,
+        },
+      );
+      if (response.statusCode == 201) {
+        return BaseModel.fromJson(response.data);
+      } else {
+        throw Exception('Failed to Register : ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      throw Exception('Failed to Register : ${e.response?.statusCode}');
+    }
+  }
+
   Future<BaseModel> fetchLogin(String email, String password) async {
     const String url = "$baseUrl/user/login";
     try {
