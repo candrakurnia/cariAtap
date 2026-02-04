@@ -48,55 +48,67 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
               margin: EdgeInsets.symmetric(horizontal: 20),
               padding: EdgeInsets.symmetric(horizontal: 10),
               width: double.infinity,
+              alignment: Alignment.center,
               height: 50,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: Colors.grey),
               ),
-              child: TextField(
-                controller: confirmationIdController,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  labelText: widget.confirmationId,
-                  hintStyle: GoogleFonts.poppins(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
+              child: Text(
+                widget.confirmationId,
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black,
                 ),
               ),
             ),
             Gap(16),
-            ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(Color(0xDF736256)),
-              ),
-              onPressed: () async {
-                await confirmationController.confirm(
-                  widget.confirmationId,
-                );
-                if (confirmationController.requestState ==
-                    RequestState.success) {
-                  Get.offAllNamed("/login");
-                } else {
-                  Get.snackbar(
-                    "Error",
-                    confirmationController.message ?? "Terjadi kesalahan",
-                  );
-                }
-              },
-              child: Text(
-                'Confirm My Account',
-                style: GoogleFonts.poppins(
-                  fontSize: 14,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
+            Obx(
+              () => ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(Color(0xDF736256)),
                 ),
+                onPressed: () async {
+                  await _handleConfirm();
+                },
+                child: confirmationController.loading.value
+                    ? SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
+                        ),
+                      )
+                    : Text(
+                        'Confirm My Account',
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _handleConfirm() async {
+    await confirmationController.confirm(widget.confirmationId);
+    if (confirmationController.requestState == RequestState.success) {
+      Get.offAllNamed("/login");
+    } else {
+      Get.snackbar(
+        "Error",
+        confirmationController.message ?? "Terjadi kesalahan",
+      );
+    }
   }
 }
