@@ -184,9 +184,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                     Gap(5.0),
-                    TextFormField(
-                      controller: roleController,
-                      keyboardType: TextInputType.text,
+                    DropdownButtonFormField(
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
@@ -196,11 +194,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         hintText: "Role",
                       ),
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return "Harap isi data kosong";
-                        }
-                        return null;
+                      items: [
+                        DropdownMenuItem(
+                          value: "Penyewa",
+                          child: Text("Penyewa", style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w500),),
+                        ),
+                        DropdownMenuItem(
+                          value: "Penyedia",
+                          child: Text("Penyedia", style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w500),),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          roleController.text = value ?? "";
+                        });
                       },
                     ),
                     Gap(16.0),
