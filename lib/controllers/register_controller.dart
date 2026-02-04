@@ -23,6 +23,7 @@ class RegisterController extends GetxController {
   ) async {
     try {
       _requestState = RequestState.loading;
+      loading.value = true;
       update();
       final response = await apiService.fetchRegister(
         name,
@@ -31,15 +32,18 @@ class RegisterController extends GetxController {
         role,
       );
       if (response.statusCode == 201) {
+        loading.value = false;
         _baseModel = response;
         _requestState = RequestState.success;
         update();
       } else {
+        loading.value = false;
         _requestState = RequestState.error;
         _message = response.message;
         update();
       }
     } catch (e) {
+      loading.value = false;
       _requestState = RequestState.error;
       _message = e.toString();
       update();

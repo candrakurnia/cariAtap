@@ -21,6 +21,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController roleController = TextEditingController();
   final RegisterController registerController = Get.put(RegisterController());
+  bool _obscurePassword = true;
   // String _valNumber = "+62";
   // final List _myFriends = ["+62", "+63", "+64", "+65"];
 
@@ -145,6 +146,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     TextFormField(
                       controller: passwordController,
                       keyboardType: TextInputType.text,
+                      obscureText: _obscurePassword,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
@@ -153,7 +155,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                         hintText: "Password",
-                        suffixIcon: Icon(Icons.remove_red_eye),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscurePassword
+                                ? Icons.visibility_off_rounded
+                                : Icons.visibility_rounded,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscurePassword = !_obscurePassword;
+                            });
+                          },
+                        ),
                       ),
                       validator: (value) {
                         if (value!.isEmpty) {
@@ -203,23 +216,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                             ),
                             onPressed: () async {
-                              if (!_formKey.currentState!.validate()) return;
-                              await registerController.register(
-                                nameController.text,
-                                emailController.text,
-                                passwordController.text,
-                                roleController.text,
-                              );
-                              if (registerController.requestState ==
-                                  RequestState.success) {
-                                Get.offAllNamed("/confirm", arguments: registerController.baseModel?.data?.user?.confirmationId ?? "");
-                              } else {
-                                Get.snackbar(
-                                  "Error",
-                                  registerController.message ??
-                                      "Terjadi kesalahan",
-                                );
-                              }
+                              await _handleRegister();
                             },
                             child: registerController.loading.value
                                 ? SizedBox(
@@ -282,5 +279,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _handleRegister() async {
+    if (!_formKey.currentState!.validate()) return;
+    await registerController.register(
+      nameController.text,
+      emailController.text,
+      passwordController.text,
+      roleController.text,
+    );
+    if (registerController.requestState == RequestState.success) {
+      Get.offAllNamed(
+        "/confirm",
+        arguments:
+            registerController.baseModel?.data?.user?.confirmationId ?? "",
+      );
+    } else {
+      Get.snackbar("Error", registerController.message ?? "Terjadi kesalahan");
+    }
   }
 }
