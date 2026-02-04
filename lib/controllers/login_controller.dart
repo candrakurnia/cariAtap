@@ -17,18 +17,22 @@ class LoginController extends GetxController {
   Future<void> login(String email, String password) async {
     try {
       _requestState = RequestState.loading;
+      loading.value = true;
       update();
       final response = await apiService.fetchLogin(email, password);
       if (response.statusCode == 200) {
-      _baseModel = response;
-      _requestState = RequestState.success;
-      update();
+        loading.value = false;
+        _baseModel = response;
+        _requestState = RequestState.success;
+        update();
       } else {
+        loading.value = false;
         _requestState = RequestState.error;
         _message = response.message;
         update();
       }
     } catch (e) {
+      loading.value = false;
       _requestState = RequestState.error;
       _message = e.toString();
       update();
