@@ -34,7 +34,7 @@ class LoginController extends GetxController {
     } catch (e) {
       loading.value = false;
       _requestState = RequestState.error;
-      _message = e.toString();
+      _message = e.toString().replaceFirst('Exception: ', '');
       update();
     }
   }
