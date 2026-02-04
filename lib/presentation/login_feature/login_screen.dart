@@ -76,11 +76,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       textInputAction: TextInputAction.next,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
+                          borderRadius: BorderRadius.circular(16.0),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
+                          borderRadius: BorderRadius.circular(16.0),
                         ),
+                        prefixIcon: Icon(Icons.email_rounded, size: 20, color: Colors.grey,),
                         hintText: "Email",
                         filled: true,
                         fillColor: Colors.white,
@@ -108,14 +109,15 @@ class _LoginScreenState extends State<LoginScreen> {
                       textInputAction: TextInputAction.done,
                       decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
+                          borderRadius: BorderRadius.circular(16.0),
                         ),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
+                          borderRadius: BorderRadius.circular(16.0),
                         ),
                         hintText: "Password",
                         filled: true,
                         fillColor: Colors.white,
+                        prefixIcon: Icon(Icons.lock, size: 20, color: Colors.grey,),
                         suffixIcon: IconButton(
                           icon: Icon(
                             _obscurePassword
@@ -171,6 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           onPressed: () async {
                             await _handleLogin();
+                            // Get.toNamed("/main");
                           },
                           child: Obx(() {
                             return loginController.loading.value
@@ -245,7 +248,8 @@ class _LoginScreenState extends State<LoginScreen> {
         passwordController.text,
       );
       if (loginController.requestState == RequestState.success) {
-        Get.offAllNamed("/main");
+        var name = loginController.baseModel?.data?.user?.name ?? 'UserTesting';
+        Get.offAllNamed("/main" ,arguments: name);
       } else {
         Get.snackbar("Error", loginController.message ?? "Terjadi kesalahan");
       }
