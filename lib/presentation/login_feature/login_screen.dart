@@ -87,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return "Harap isi email";
+                          return "Email cannot be empty";
                         }
                         return null;
                       },
@@ -131,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return "Harap isi password";
+                          return "Password cannot be empty";
                         }
                         return null;
                       },
@@ -141,7 +141,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       alignment: Alignment.centerRight,
                       child: GestureDetector(
                         onTap: () {
-                          // TODO: Implement forgot password functionality
                           Get.snackbar(
                             "Info",
                             "Fitur lupa password akan segera hadir",
@@ -171,20 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              await loginController.login(
-                                emailController.text.trim(),
-                                passwordController.text,
-                              );
-                              if (loginController.requestState == RequestState.success) {
-                                Get.offAllNamed("/main");
-                              } else {
-                                Get.snackbar(
-                                  "Error",
-                                  loginController.message ?? "Terjadi kesalahan",
-                                );
-                              }
-                            }
+                            await _handleLogin();
                           },
                           child: Obx(() {
                             return loginController.loading.value
@@ -250,5 +236,19 @@ class _LoginScreenState extends State<LoginScreen> {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _handleLogin() async {
+    if (_formKey.currentState!.validate()) {
+      await loginController.login(
+        emailController.text.trim(),
+        passwordController.text,
+      );
+      if (loginController.requestState == RequestState.success) {
+        Get.offAllNamed("/main");
+      } else {
+        Get.snackbar("Error", loginController.message ?? "Terjadi kesalahan");
+      }
+    }
   }
 }
