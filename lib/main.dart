@@ -1,4 +1,5 @@
 import 'package:cari_atap/controllers/confirmation_controller.dart';
+import 'package:cari_atap/controllers/home_controller.dart';
 import 'package:cari_atap/controllers/login_controller.dart';
 import 'package:cari_atap/controllers/register_controller.dart';
 import 'package:cari_atap/presentation/confirm_feature/confirm_screen.dart';
@@ -24,6 +25,7 @@ class _MyAppState extends State<MyApp> {
   LoginController loginController = Get.put(LoginController());
   RegisterController registerController = Get.put(RegisterController());
   ConfirmationController confirmationController = Get.put(ConfirmationController());
+  HomeController homeController = Get.put(HomeController());
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(

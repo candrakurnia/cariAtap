@@ -1,14 +1,23 @@
+import 'package:cari_atap/controllers/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final String name;
+  const HomeScreen({super.key, required this.name});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final HomeController homeController = Get.find();
+  @override
+  void initState() {
+    super.initState();
+    homeController.fetchHome("");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,16 +38,60 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Gap(20),
-                  _buildTopSection(),
+                  _buildTopSection(widget.name),
                   const Gap(24),
                   _buildSearchBar(),
                   const Gap(24),
-                  _buildPopularNowSection(),
-                  const Gap(24),
-                  _buildCategorySection(),
-                  const Gap(24),
-                  _buildPropertyListings(),
-                  const Gap(20),
+                  GetBuilder<HomeController>(
+                    builder: (controller) {
+                      if (controller.loading.value) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      return GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 0.75,
+                              crossAxisSpacing: 16,
+                              mainAxisSpacing: 16,
+                            ),
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: controller.homeModel?.data?.length ?? 0,
+                        itemBuilder: (context, index) {
+                          final data = controller.homeModel?.data?[index];
+                          return Container(
+                            width: 180,
+                            height: 120,
+                            margin: const EdgeInsets.only(bottom: 12),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.1),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: _buildPropertyCard(
+                              title: data?.name ?? '',
+                              location: data?.address ?? '',
+                              price: data?.price?.toString() ?? '',
+                              imageUrl: data?.images?[0] ?? '',
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  // _buildPopularNowSection(),
+                  // const Gap(24),
+                  // _buildCategorySection(),
+                  // const Gap(24),
+                  // _buildPropertyListings(),
+                  // const Gap(20),
                 ],
               ),
             ),
@@ -48,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildTopSection() {
+  Widget _buildTopSection(String name) {
     return Row(
       children: [
         CircleAvatar(
@@ -71,8 +124,8 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Hi, Candra Kurnia',
+              Text(
+                name,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -125,20 +178,18 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         Expanded(
           child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white12
-            ),
+            decoration: BoxDecoration(color: Colors.white12),
             child: TextFormField(
               keyboardType: TextInputType.text,
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0)
+                  borderRadius: BorderRadius.circular(12.0),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0)
+                  borderRadius: BorderRadius.circular(12.0),
                 ),
-                hintText: "Pencarian ..."
+                hintText: "Pencarian ...",
               ),
             ),
           ),
@@ -236,10 +287,10 @@ class _HomeScreenState extends State<HomeScreen> {
               imageUrl,
               width: 180,
               height: 120,
-              fit: BoxFit.cover,
+              fit: BoxFit.contain,
               errorBuilder: (context, error, stackTrace) {
                 return Container(
-                  width: 180,
+                  width: double.infinity,
                   height: 120,
                   color: Colors.grey[300],
                   child: const Icon(Icons.home, size: 50, color: Colors.grey),

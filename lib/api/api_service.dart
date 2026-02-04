@@ -1,4 +1,6 @@
+import 'package:cari_atap/helper/dio_helper.dart';
 import 'package:cari_atap/model/base_model.dart';
+import 'package:cari_atap/model/home_model.dart';
 import 'package:dio/dio.dart';
 
 class ApiService {
@@ -12,6 +14,32 @@ class ApiService {
     dio.options.receiveTimeout = const Duration(seconds: 10);
   }
 
+  Future<HomeModel> fetchHome(String query) async {
+    const String url = "$baseUrl/homes/search";
+    try {
+      final response = await dio.get(
+        url,
+        queryParameters: {
+          "limit": 10,
+          "page": 1,
+          "q" : query,
+        },
+        options: Options(
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+          },
+        ),
+      );
+      return HomeModel.fromJson(response.data);
+    } on DioException catch (e) {
+      return DioErrorHandler.handleWithParser<HomeModel>(
+        e,
+        (json) => HomeModel.fromJson(json),
+      );
+    }
+  }
+
   Future<BaseModel> fetchConfirmation(String confirmationId) async {
     const String url = "$baseUrl/user/confirmation";
     try {
@@ -22,7 +50,10 @@ class ApiService {
         throw Exception('Failed to Confirmation : ${response.statusCode}');
       }
     } on DioException catch (e) {
-      throw Exception('Failed to Confirmation : ${e.response?.statusCode}');
+      return DioErrorHandler.handleWithParser<BaseModel>(
+        e,
+        (json) => BaseModel.fromJson(json),
+      );
     }
   }
 
@@ -49,7 +80,10 @@ class ApiService {
         throw Exception('Failed to Register : ${response.statusCode}');
       }
     } on DioException catch (e) {
-      throw Exception('Failed to Register : ${e.response?.statusCode}');
+      return DioErrorHandler.handleWithParser<BaseModel>(
+        e,
+        (json) => BaseModel.fromJson(json),
+      );
     }
   }
 
@@ -70,10 +104,13 @@ class ApiService {
       if (response.statusCode == 200) {
         return BaseModel.fromJson(response.data);
       } else {
-        throw Exception('Failed to Login : ${response.statusCode}');
+        throw Exception('Failed to Login : ${response.data}');
       }
     } on DioException catch (e) {
-      throw Exception('Failed to Login : ${e.response?.statusCode}');
+      return DioErrorHandler.handleWithParser<BaseModel>(
+        e,
+        (json) => BaseModel.fromJson(json),
+      );
     }
   }
 }
