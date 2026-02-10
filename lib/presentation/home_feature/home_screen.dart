@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cari_atap/controllers/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -13,9 +15,37 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final HomeController homeController = Get.find();
+  final TextEditingController searchController = TextEditingController();
+  Timer? _debounce;
+
   @override
   void initState() {
     super.initState();
+    homeController.fetchHome("");
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged(String query) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      homeController.fetchHome(query.trim());
+    });
+  }
+
+  void _onSearchSubmitted(String query) {
+    _debounce?.cancel();
+    homeController.fetchHome(query.trim());
+  }
+
+  void _clearSearch() {
+    searchController.clear();
+    _debounce?.cancel();
     homeController.fetchHome("");
   }
 
@@ -40,12 +70,26 @@ class _HomeScreenState extends State<HomeScreen> {
                   const Gap(20),
                   _buildTopSection(widget.name),
                   const Gap(24),
-                  _buildSearchBar(),
+                  _buildSearchBar(homeController, searchController),
                   const Gap(24),
                   GetBuilder<HomeController>(
                     builder: (controller) {
                       if (controller.loading.value) {
                         return const Center(child: CircularProgressIndicator());
+                      }
+                      if ((controller.homeModel?.data?.length ?? 0) == 0) {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(32.0),
+                            child: Text(
+                              'Data tidak ditemukan',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                        );
                       }
                       return GridView.builder(
                         gridDelegate:
@@ -173,16 +217,32 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSearchBar() {
+  Widget _buildSearchBar(HomeController homeController, TextEditingController searchController) {
     return Row(
       children: [
         Expanded(
           child: Container(
             decoration: BoxDecoration(color: Colors.white12),
             child: TextFormField(
+              controller: searchController,
               keyboardType: TextInputType.text,
+              textInputAction: TextInputAction.search,
+              onChanged: _onSearchChanged,
+              onFieldSubmitted: _onSearchSubmitted,
               decoration: InputDecoration(
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: ValueListenableBuilder<TextEditingValue>(
+                  valueListenable: searchController,
+                  builder: (context, value, child) {
+                    if (value.text.isNotEmpty) {
+                      return IconButton(
+                        icon: const Icon(Icons.clear, size: 20),
+                        onPressed: _clearSearch,
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),
                 ),
