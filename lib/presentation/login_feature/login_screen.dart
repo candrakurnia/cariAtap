@@ -1,6 +1,5 @@
 import 'package:cari_atap/common/state_enum.dart';
 import 'package:cari_atap/controllers/login_controller.dart';
-import 'package:cari_atap/presentation/main_navigation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -61,28 +60,31 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const Gap(8.0),
-                    Text(
-                      "Email",
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const Gap(6.0),
+                    const Gap(16.0),
                     TextFormField(
                       controller: emailController,
                       keyboardType: TextInputType.text,
                       textInputAction: TextInputAction.next,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16.0),
+                          borderSide: BorderSide(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(24.0),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16.0),
+                          borderSide: BorderSide(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(24.0),
                         ),
-                        prefixIcon: Icon(Icons.email_rounded, size: 20, color: Colors.grey,),
+                        prefixIcon: Icon(
+                          Icons.email_rounded,
+                          size: 20,
+                          color: Colors.grey,
+                        ),
                         hintText: "Email",
+                        hintStyle: GoogleFonts.poppins(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey[700],
+                        ),
                         filled: true,
                         fillColor: Colors.white,
                       ),
@@ -93,15 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         return null;
                       },
                     ),
-                    const Gap(12.0),
-                    Text(
-                      "Password",
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const Gap(6.0),
+                    const Gap(16.0),
                     TextFormField(
                       controller: passwordController,
                       keyboardType: TextInputType.text,
@@ -109,15 +103,26 @@ class _LoginScreenState extends State<LoginScreen> {
                       textInputAction: TextInputAction.done,
                       decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16.0),
+                          borderSide: BorderSide(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(24.0),
                         ),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16.0),
+                          borderSide: BorderSide(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(24.0),
                         ),
                         hintText: "Password",
+                        hintStyle: GoogleFonts.poppins(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey[700],
+                        ),
                         filled: true,
                         fillColor: Colors.white,
-                        prefixIcon: Icon(Icons.lock, size: 20, color: Colors.grey,),
+                        prefixIcon: Icon(
+                          Icons.lock,
+                          size: 20,
+                          color: Colors.grey,
+                        ),
                         suffixIcon: IconButton(
                           icon: Icon(
                             _obscurePassword
@@ -138,7 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         return null;
                       },
                     ),
-                    const Gap(4.0),
+                    const Gap(8.0),
                     Align(
                       alignment: Alignment.centerRight,
                       child: GestureDetector(
@@ -146,14 +151,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           Get.snackbar(
                             "Info",
                             "Fitur lupa password akan segera hadir",
-                            backgroundColor: Colors.blue,
+                            backgroundColor: Color(0xDF736256),
                             colorText: Colors.white,
                           );
                         },
                         child: Text(
                           "Forgot Password",
                           style: GoogleFonts.poppins(
-                            fontSize: 12,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: Colors.blueAccent,
                           ),
@@ -163,7 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const Gap(24.0),
                     Center(
                       child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.6,
+                        width: MediaQuery.of(context).size.width * 0.9,
                         height: 48,
                         child: ElevatedButton(
                           style: ButtonStyle(
@@ -173,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           onPressed: () async {
                             await _handleLogin();
-                            // Get.toNamed("/main");
+                            // Get.offAllNamed("/main");
                           },
                           child: Obx(() {
                             return loginController.loading.value
@@ -196,6 +201,95 @@ class _LoginScreenState extends State<LoginScreen> {
                           }),
                         ),
                       ),
+                    ),
+                    const Gap(24.0),
+                    Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Or continue With',
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                    ),
+                    const Gap(16.0),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.4,
+                          height: 48,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Get.snackbar(
+                                'Info',
+                                'Fitur login dengan Google akan segera hadir',
+                                backgroundColor: Color(0xDF736256),
+                                colorText: Colors.white,
+                              );
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  'assets/ic_google.png',
+                                  width: 20,
+                                  height: 20,
+                                ),
+                                const Gap(8.0),
+                                Text(
+                                  'Google',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.4,
+                          height: 48,
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStatePropertyAll(
+                                Colors.white54,
+                              ),
+                            ),
+                            onPressed: () {
+                              Get.snackbar(
+                                'Info',
+                                'Fitur login dengan Apple akan segera hadir',
+                                backgroundColor: Color(0xDF736256),
+                                colorText: Colors.white,
+                              );
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  'assets/ic_apple.png',
+                                  width: 20,
+                                  height: 20,
+                                ),
+                                const Gap(8.0),
+                                Text(
+                                  'Apple',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const Gap(24.0),
                     Row(
@@ -249,7 +343,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       if (loginController.requestState == RequestState.success) {
         var name = loginController.baseModel?.data?.user?.name ?? 'UserTesting';
-        Get.offAllNamed("/main" ,arguments: name);
+        Get.offAllNamed("/main", arguments: name);
       } else {
         Get.snackbar("Error", loginController.message ?? "Terjadi kesalahan");
       }
