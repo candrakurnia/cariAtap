@@ -4,10 +4,12 @@ import 'package:cari_atap/controllers/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 class HomeScreen extends StatefulWidget {
-  final String name;
-  const HomeScreen({super.key, required this.name});
+  final String? name;
+  const HomeScreen({super.key, this.name});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -68,71 +70,38 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Gap(20),
-                  _buildTopSection(widget.name),
+                  _buildTopSection(widget.name ?? 'UserAccount'),
                   const Gap(24),
                   _buildSearchBar(homeController, searchController),
                   const Gap(24),
-                  GetBuilder<HomeController>(
-                    builder: (controller) {
-                      if (controller.loading.value) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      if ((controller.homeModel?.data?.length ?? 0) == 0) {
-                        return const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(32.0),
-                            child: Text(
-                              'Data tidak ditemukan',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ),
-                        );
-                      }
-                      return GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              childAspectRatio: 0.75,
-                              crossAxisSpacing: 16,
-                              mainAxisSpacing: 16,
-                            ),
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: controller.homeModel?.data?.length ?? 0,
-                        itemBuilder: (context, index) {
-                          final data = controller.homeModel?.data?[index];
-                          return Container(
-                            width: 180,
-                            height: 120,
-                            margin: const EdgeInsets.only(bottom: 12),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.1),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: _buildPropertyCard(
-                              title: data?.name ?? '',
-                              location: data?.address ?? '',
-                              price: data?.price?.toString() ?? '',
-                              imageUrl: data?.images?[0] ?? '',
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   children: [
+                  //     Text(
+                  //       'Popular Now',
+                  //       style: GoogleFonts.poppins(
+                  //         fontSize: 18,
+                  //         fontWeight: FontWeight.bold,
+                  //         color: Colors.black87,
+                  //       ),
+                  //     ),
+                  //     Text(
+                  //       'See More >',
+                  //       style: GoogleFonts.poppins(
+                  //         fontSize: 16,
+                  //         fontWeight: FontWeight.w500,
+                  //         color: Color(0xDF736256),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                  // const Gap(12),
+                  // _buildListCard(),
+                  // const Gap(20),
+                  _buildCategorySection(),
+                  const Gap(24),
+                  _buildPropertyListings(),
                   // _buildPopularNowSection(),
-                  // const Gap(24),
-                  // _buildCategorySection(),
                   // const Gap(24),
                   // _buildPropertyListings(),
                   // const Gap(20),
@@ -144,6 +113,64 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+  // GetBuilder<HomeController> _buildListCard() {
+  //   return GetBuilder<HomeController>(
+  //     builder: (controller) {
+  //       if (controller.loading.value) {
+  //         return const Center(child: CircularProgressIndicator());
+  //       }
+  //       if ((controller.homeModel?.data?.length ?? 0) == 0) {
+  //         return const Center(
+  //           child: Padding(
+  //             padding: EdgeInsets.all(32.0),
+  //             child: Text(
+  //               'Data tidak ditemukan',
+  //               style: TextStyle(fontSize: 16, color: Colors.grey),
+  //             ),
+  //           ),
+  //         );
+  //       }
+  //       return GridView.builder(
+  //         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+  //           crossAxisCount: 2,
+  //           childAspectRatio: 0.65,
+  //           crossAxisSpacing: 16,
+  //           mainAxisSpacing: 16,
+  //         ),
+  //         shrinkWrap: true,
+  //         physics: const NeverScrollableScrollPhysics(),
+  //         itemCount: controller.homeModel!.data!.length > 4 ? 6 : 2,
+  //         itemBuilder: (context, index) {
+  //           final data = controller.homeModel?.data?[index];
+  //           return Container(
+  //             width: 180,
+  //             // height: 120,
+  //             margin: const EdgeInsets.only(bottom: 12),
+  //             decoration: BoxDecoration(
+  //               borderRadius: BorderRadius.circular(12),
+  //               color: Colors.white,
+  //               boxShadow: [
+  //                 BoxShadow(
+  //                   color: Colors.black.withValues(alpha: 0.1),
+  //                   blurRadius: 8,
+  //                   offset: const Offset(0, 2),
+  //                 ),
+  //               ],
+  //             ),
+  //             child: _buildPropertyCard(
+  //               title: data?.name ?? '',
+  //               location: data?.address ?? '',
+  //               price: data?.price?.toString() ?? '',
+  //               imageUrl: data?.images?[0] ?? '',
+  //               rating: data?.rating?.toString() ?? '',
+  //             ),
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 
   Widget _buildTopSection(String name) {
     return Row(
@@ -169,7 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                name,
+                "Hello, ${name.isEmpty ? 'UserAccount' : name}",
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -217,12 +244,21 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSearchBar(HomeController homeController, TextEditingController searchController) {
+  Widget _buildSearchBar(
+    HomeController homeController,
+    TextEditingController searchController,
+  ) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Expanded(
           child: Container(
-            decoration: BoxDecoration(color: Colors.white12),
+            height: 48,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.8),
+              borderRadius: BorderRadius.circular(24.0),
+            ),
             child: TextFormField(
               controller: searchController,
               keyboardType: TextInputType.text,
@@ -244,12 +280,19 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
+                  borderSide: BorderSide(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(24.0),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
+                  borderSide: BorderSide(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(24.0),
                 ),
                 hintText: "Pencarian ...",
+                hintStyle: GoogleFonts.poppins(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.grey,
+                ),
               ),
             ),
           ),
@@ -267,63 +310,66 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildPopularNowSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Popular Now',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: const Text(
-                'see more >',
-                style: TextStyle(fontSize: 14, color: Colors.blue),
-              ),
-            ),
-          ],
-        ),
-        const Gap(12),
-        SizedBox(
-          height: 220,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: [
-              _buildPropertyCard(
-                title: 'Sunter Appartment',
-                location: 'Sunter, Jakarta Utara',
-                price: 'Rp. 1.500.000',
-                imageUrl:
-                    'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400',
-              ),
-              const Gap(16),
-              _buildPropertyCard(
-                title: 'Kelapa Gading House',
-                location: 'Kelapa Gading, Jakarta Utara',
-                price: 'Rp. 1.500.000',
-                imageUrl:
-                    'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400',
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
+  // Widget _buildPopularNowSection() {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Row(
+  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //         children: [
+  //           const Text(
+  //             'Popular Now',
+  //             style: TextStyle(
+  //               fontSize: 20,
+  //               fontWeight: FontWeight.bold,
+  //               color: Colors.black87,
+  //             ),
+  //           ),
+  //           TextButton(
+  //             onPressed: () {},
+  //             child: const Text(
+  //               'see more >',
+  //               style: TextStyle(fontSize: 14, color: Colors.blue),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //       const Gap(12),
+  //       SizedBox(
+  //         height: 220,
+  //         child: ListView(
+  //           scrollDirection: Axis.horizontal,
+  //           children: [
+  //             _buildPropertyCard(
+  //               title: 'Sunter Appartment',
+  //               location: 'Sunter, Jakarta Utara',
+  //               price: 'Rp. 1.500.000',
+  //               imageUrl:
+  //                   'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400',
+  //             ),
+  //             const Gap(16),
+  //             _buildPropertyCard(
+  //               title: 'Kelapa Gading House',
+  //               location: 'Kelapa Gading, Jakarta Utara',
+  //               price: 'Rp. 1.500.000',
+  //               imageUrl:
+  //                   'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400',
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget _buildPropertyCard({
-    required String title,
-    required String location,
-    required String price,
-    required String imageUrl,
+    required property,
+    // required String title,
+    // required String location,
+    // required String price,
+    // required String imageUrl,
+    // required String rating,
+    // required String label,
   }) {
     return Container(
       width: 180,
@@ -341,22 +387,51 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-            child: Image.network(
-              imageUrl,
-              width: 180,
-              height: 120,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(16),
+                ),
+                child: Image.network(
+                  property['imageUrl'],
                   width: double.infinity,
                   height: 120,
-                  color: Colors.grey[300],
-                  child: const Icon(Icons.home, size: 50, color: Colors.grey),
-                );
-              },
-            ),
+                  fit: BoxFit.fill,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: double.infinity,
+                      height: 120,
+                      color: Colors.grey[300],
+                      child: const Icon(
+                        Icons.home,
+                        size: 50,
+                        color: Colors.grey,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              Positioned(
+                top: 4,
+                right: 4,
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.8),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    property['label'],
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xDF736256),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
           Padding(
             padding: const EdgeInsets.all(12),
@@ -366,22 +441,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 Text(
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  title,
-                  style: const TextStyle(
-                    fontSize: 16,
+                  property['title'],
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
                   ),
                 ),
-                const Gap(4),
+                const Gap(8),
                 Row(
                   children: [
                     const Icon(Icons.location_on, size: 14, color: Colors.grey),
                     const Gap(4),
                     Expanded(
                       child: Text(
-                        location,
-                        style: const TextStyle(
+                        property['location'] as String,
+                        style: GoogleFonts.poppins(
                           fontSize: 12,
                           color: Colors.grey,
                         ),
@@ -392,9 +467,28 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
                 const Gap(8),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    property['type'],
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xDF736256),
+                    ),
+                  ),
+                ),
+                Gap(8),
                 Text(
-                  price,
-                  style: const TextStyle(
+                  'Rp${NumberFormat.decimalPattern('id_ID').format(int.parse(property['price']))}',
+                  style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Colors.green,
@@ -456,7 +550,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   const Gap(8),
                   Text(
                     category['label'] as String,
-                    style: const TextStyle(fontSize: 12, color: Colors.black87),
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
+                    ),
                   ),
                 ],
               ),
@@ -485,48 +583,84 @@ class _HomeScreenState extends State<HomeScreen> {
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            childAspectRatio: 0.75,
+            childAspectRatio: 0.7,
             crossAxisSpacing: 16,
             mainAxisSpacing: 16,
           ),
-          itemCount: 4,
+          itemCount: 6,
           itemBuilder: (context, index) {
             final properties = [
               {
-                'title': 'Sunter Appartment',
-                'location': 'Sunter, Jakarta Utara',
-                'price': 'Rp. 1.500.000',
+                'title': 'Rumah Minimalis',
+                'location': 'Jakarta Timur, Jakarta',
+                'price': 1500000.toString(),
                 'imageUrl':
                     'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400',
+                'rating': '4.8',
+                'label': 'elite',
+                'type': 'Wifi, Ac, Lemari, Kasur',
+              },
+              {
+                'title': 'Rumah Modern',
+                'location': 'Jakarta Timur, Jakarta',
+                'price': 1500000.toString(),
+                'imageUrl':
+                    'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400',
+                'rating': '4.5',
+                'label': 'luxury',
+                'type': 'Wifi, Ac, Lemari, Kasur',
+              },
+              {
+                'title': 'Sunter Appartment',
+                'location': 'Sunter, Jakarta Utara',
+                'price': 1500000.toString(),
+                'imageUrl':
+                    'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400',
+                'rating': '4.8',
+                'label': 'elite',
+                'type': 'Wifi, Ac, Lemari, Kasur',
               },
               {
                 'title': 'Kelapa Gading House',
                 'location': 'Kelapa Gading, Jakarta Utara',
-                'price': 'Rp. 1.500.000',
+                'price': 1500000.toString(),
                 'imageUrl':
                     'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400',
+                'rating': '4.5',
+                'label': 'luxury',
+                'type': 'Wifi, Ac, Lemari, Kasur',
               },
               {
                 'title': 'Sunter Appartment',
                 'location': 'Sunter, Jakarta Utara',
-                'price': 'Rp. 1.500.000',
+                'price': 1500000.toString(),
                 'imageUrl':
                     'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400',
+                'rating': '4.5',
+                'label': 'elite',
+                'type': 'Wifi, Ac, Lemari, Kasur',
               },
               {
                 'title': 'Kelapa Gading House',
                 'location': 'Kelapa Gading, Jakarta Utara',
-                'price': 'Rp. 1.500.000',
+                'price': 15000000.toString(),
                 'imageUrl':
                     'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400',
+                'rating': '4.5',
+                'label': 'luxury',
+                'type': 'Wifi, Ac, Lemari, Kasur',
               },
             ];
             final property = properties[index % properties.length];
             return _buildPropertyCard(
-              title: property['title']!,
-              location: property['location']!,
-              price: property['price']!,
-              imageUrl: property['imageUrl']!,
+              property: property,
+              // type: property['type']!,
+              // title: property['title']!,
+              // location: property['location']!,
+              // price: property['price']!,
+              // imageUrl: property['imageUrl']!,
+              // rating: property['rating']!,
+              // label: property['label']!,
             );
           },
         ),
